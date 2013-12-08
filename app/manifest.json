@@ -1,0 +1,11 @@
+{
+  "name": "Sockets Example",
+  "description": "Example project.",
+  "version": "0.1",
+  "app": {
+    "background": {
+      "scripts": ["scripts/background.js"]
+    }
+  },
+  "icons": {  }
+}
