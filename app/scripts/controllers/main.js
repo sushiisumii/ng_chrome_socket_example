@@ -3,11 +3,10 @@
 angular.module('gdlSocketsApp')
   .controller('MainCtrl', function ($scope, ConnSocketio, ConnTCPSocket) {
 
-  	var ConnSocket = ConnTCPSocket;
+  	var ConnSocket = ConnSocketio;
   	// Client counter
   	$scope.count = 0;
 
-  	$scope.offline = true;
   	$scope.friends = [];
  	
  	// Initializes connection to server.
@@ -17,7 +16,6 @@ angular.module('gdlSocketsApp')
     // Callback notifying that we have succesfully connected.
     var onConnect = function() {
     	console.log("onConnect");
-    	$scope.offline = false;
     	$scope.$apply();
 
     	// Initialize the count to existing value.
@@ -27,7 +25,6 @@ angular.module('gdlSocketsApp')
     // Callback notifying that we have disconnected.
     var onDisconnect = function() {
     	console.log("onDisconnect");
-    	$scope.offline = true;
     	$scope.$apply();
     };
 

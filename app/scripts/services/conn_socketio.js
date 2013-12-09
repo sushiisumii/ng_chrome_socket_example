@@ -28,6 +28,14 @@ angular.module('gdlSocketsApp')
 
   		self.socketCon.on('end', function() {
   			self.events.emit('disconnect');
+  		});
+
+  		self.socketCon.on('error', function() {
+  			self.events.emit('disconnect');
+  		})
+
+  		self.socketCon.on('reconnecting', function() {
+  			self.events.emit('disconnect');
   		})
   	};
 
