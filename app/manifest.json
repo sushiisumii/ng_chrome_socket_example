@@ -7,5 +7,8 @@
       "scripts": ["scripts/background.js"]
     }
   },
+  "permissions": [
+    {"socket": ["tcp-connect:*:*"]}
+  ],
   "icons": {  }
 }

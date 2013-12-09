@@ -1,13 +1,13 @@
 'use strict';
 
 angular.module('gdlSocketsApp')
-  .controller('MainCtrl', function ($scope, ConnSocketio) {
+  .controller('MainCtrl', function ($scope, ConnSocket) {
 
   	$scope.offline = true;
   	$scope.friends = [{name: 'hi'}];
  	
  	// Initializes connection to server.
-  	ConnSocketio.serverConnect();
+  	ConnSocket.serverConnect();
 
 
     // Callback notifiying that we have succesfully connected.
@@ -37,12 +37,12 @@ angular.module('gdlSocketsApp')
 
 	// When the app is destroyed, make sure to cleanly disconnect.
   	$scope.$on('$destroy', function(event) {
-  		ConnSocketio.disconnect();
+  		ConnSocket.disconnect();
   	});
 
 
   	// Add listeners to events emitted by manager.
-  	ConnSocketio.events.addListener('disconnect', onDisconnect);
-  	ConnSocketio.events.addListener('connected', onConnect);
-  	ConnSocketio.events.addListener('initialize', onInitialize);
+  	ConnSocket.events.addListener('disconnect', onDisconnect);
+  	ConnSocket.events.addListener('connected', onConnect);
+  	ConnSocket.events.addListener('initialize', onInitialize);
   });
