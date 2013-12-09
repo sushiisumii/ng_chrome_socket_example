@@ -5,48 +5,43 @@ angular.module('gdlSocketsApp')
 
   	var self = this;
 
-  	self._events = new EventEmitter();
+  	this.events = new EventEmitter();
 
 
-  	/*
-  	 * Socket.io Connection
-  	 */
-  	var _socketioServerConnect = function() {
+  	// Socket.io connect	
+  	this.serverConnect = function(startCount) {
+  		console.log('serverConnect');
 
   		self.socketCon = io.connect('http://127.0.0.1:1337');
 
   		self.socketCon.on('connect', function() {
-  			self._events.emit('connected');
+  			self.events.emit('connected');
   		});
 
-  		self.socketCon.on('initialize', function(data) {
-  			self._events.emit('initialize', { count: data.count, friends: data.friends});
+  		self.socketCon.on('initResp', function(data) {
+  			self.events.emit('initResp', { count: data.count, friends: data.friends});
   		});
 
   		self.socketCon.on('counter_update', function(data) {
-  			self._events.emit('count', data.count);
+  			self.events.emit('count', data.count);
   		});
 
   		self.socketCon.on('end', function() {
-  			self._events.emit('disconnect');
+  			self.events.emit('disconnect');
   		})
   	};
 
-  	var _socketioDisconnect = function() {
+  	// Socket.io disconnect
+  	this.disconnect = function() {
 
   		self.socketCon.disconnect();
   		console.log("disconnected from server");
-
   	};
 
-
-  	return { 
-  	 	serverConnect: _socketioServerConnect,
-  	 	disconnect: _socketioDisconnect,
-
-  	 	events: self._events
-  	};
-
+  	// Socket.io send init data to server
+  	this.init = function(startCount) {
+		self.socketCon.emit('init', { count: startCount});
+  	}
 
 
   });

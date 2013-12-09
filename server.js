@@ -4,25 +4,26 @@ function handler (req, res) {
 }
 
 
-var server = require('http').createServer(handler);
-server.listen(1337, '127.0.0.1');
-
-console.log('Server running on port 1337');
+console.log('Socket.io running on port 1337');
 
 
 // Some data to respond with.
 var counter = 0;
 var friendsList = [{name: 'Bill'},{ name: 'Steve'}, { name: 'Woz'} ];
 
-
 /*
  * Socket.io connection
  */
 
-var io = require('socket.io').listen(server);
+var io_server = require('http').createServer(handler);
+var io = require('socket.io').listen(io_server);
 io.sockets.on('connection', function(socket){
 
-   socket.emit('initialize', { count: counter, friends: friendsList });
+   socket.on('init', function(data) {
+        counter = data.count;
+
+        socket.emit('initResp', { count: counter, friends: friendsList });
+   });
 
    socket.on('disconnect', function() {
         clearInterval(writerLoop);
@@ -36,6 +37,8 @@ io.sockets.on('connection', function(socket){
    }, 1000);
 });
 
+io_server.listen(1337, '127.0.0.1');
+
 
 
 /*
@@ -44,26 +47,31 @@ io.sockets.on('connection', function(socket){
 var net = require('net');
 var tcp_server = net.createServer(function (sock) {
 
-  sock.write(JSON.stringify({ 'event': 'initialize', data: {count: counter, friends: friendsList }}));
-
-  sock.on('data', function(data) {
-
-  });
+  var writerLoop;
 
   sock.on('end', function() {
     clearInterval(writerLoop);
     counter = 0;
   });
 
+  sock.on('data', function(data) {
+    var dataObj = JSON.parse(data);
+    console.log(dataObj);
+    if(dataObj.event === 'init') {
+        counter = dataObj.data.count;
 
-  var writerLoop = setInterval(function() {
-        counter++;
-        sock.write(JSON.stringify({ 'event': 'counter_update', data: { count: counter}} ));
-  }, 1000);
-  
+        sock.write(JSON.stringify({ 'event': 'initResp', data: {count: counter, friends: friendsList }}));
+        
+        writerLoop = setInterval(function() {
+              counter++;
+              sock.write(JSON.stringify({ 'event': 'counter_update', data: { count: counter}} ));
+        }, 1000);
+    }
+  });
+
 });
 
 tcp_server.listen(1338, function() { 
-  console.log('tcp server running');
+  console.log('TCP running on port 1338');
 });
 

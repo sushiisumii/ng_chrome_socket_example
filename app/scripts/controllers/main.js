@@ -4,6 +4,8 @@ angular.module('gdlSocketsApp')
   .controller('MainCtrl', function ($scope, ConnSocketio, ConnTCPSocket) {
 
   	var ConnSocket = ConnTCPSocket;
+  	// Client counter
+  	$scope.count = 0;
 
   	$scope.offline = true;
   	$scope.friends = [];
@@ -12,21 +14,24 @@ angular.module('gdlSocketsApp')
   	ConnSocket.serverConnect();
 
 
-    // Callback notifiying that we have succesfully connected.
+    // Callback notifying that we have succesfully connected.
     var onConnect = function() {
     	console.log("onConnect");
     	$scope.offline = false;
     	$scope.$apply();
+
+    	// Initialize the count to existing value.
+    	ConnSocket.init($scope.count);
     };
 
-    // Callback notifiying that we have disconnected.
+    // Callback notifying that we have disconnected.
     var onDisconnect = function() {
     	console.log("onDisconnect");
     	$scope.offline = true;
     	$scope.$apply();
     };
 
-    // Callback notifiying that we have gotten initial data.
+    // Callback notifying that we have gotten initial data.
     var onInitialize = function(data) {
     	console.log("onInitialize");
 
@@ -35,10 +40,11 @@ angular.module('gdlSocketsApp')
     	$scope.$apply();
     };
 
+    // Callback notifying that we have an updated count.
     var onCountUpdate = function(count) {
     	$scope.count = count;
     	$scope.$apply();	
-    }
+    };
 
 
 	// When the app is destroyed, make sure to cleanly disconnect.
@@ -46,10 +52,9 @@ angular.module('gdlSocketsApp')
   		ConnSocket.disconnect();
   	});
 
-
   	// Add listeners to events emitted by manager.
   	ConnSocket.events.addListener('disconnect', onDisconnect);
   	ConnSocket.events.addListener('connected', onConnect);
-  	ConnSocket.events.addListener('initialize', onInitialize);
+  	ConnSocket.events.addListener('initResp', onInitialize);
   	ConnSocket.events.addListener('count', onCountUpdate);
   });
