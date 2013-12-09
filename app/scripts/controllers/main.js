@@ -16,7 +16,6 @@ angular.module('gdlSocketsApp')
     // Callback notifying that we have succesfully connected.
     var onConnect = function() {
     	console.log("onConnect");
-    	$scope.$apply();
 
     	// Initialize the count to existing value.
     	ConnSocket.init($scope.count);
@@ -25,7 +24,6 @@ angular.module('gdlSocketsApp')
     // Callback notifying that we have disconnected.
     var onDisconnect = function() {
     	console.log("onDisconnect");
-    	$scope.$apply();
     };
 
     // Callback notifying that we have gotten initial data.

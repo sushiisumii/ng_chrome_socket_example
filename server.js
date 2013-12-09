@@ -1,21 +1,19 @@
-function handler (req, res) {
-  res.writeHead(200);
-  res.end('Server');
-}
-
 
 console.log('Socket.io running on port 1337');
 
 
 // Some data to respond with.
 var counter = 0;
-var friendsList = [{name: 'Bill'},{ name: 'Steve'}, { name: 'Woz'} ];
+var friendsList = [{name: 'Bill'},{ name: 'Steve'}, { name: 'Larry'} ];
 
 /*
  * Socket.io connection
  */
 
-var io_server = require('http').createServer(handler);
+var io_server = require('http').createServer(function(req, res) {
+    res.writeHead(200);
+    res.end('server');
+});
 var io = require('socket.io').listen(io_server);
 io.sockets.on('connection', function(socket){
 
