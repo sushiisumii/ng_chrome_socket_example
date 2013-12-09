@@ -1,10 +1,12 @@
 'use strict';
 
 angular.module('gdlSocketsApp')
-  .controller('MainCtrl', function ($scope, ConnSocket) {
+  .controller('MainCtrl', function ($scope, ConnSocketio, ConnTCPSocket) {
+
+  	var ConnSocket = ConnTCPSocket;
 
   	$scope.offline = true;
-  	$scope.friends = [{name: 'hi'}];
+  	$scope.friends = [];
  	
  	// Initializes connection to server.
   	ConnSocket.serverConnect();
@@ -27,12 +29,16 @@ angular.module('gdlSocketsApp')
     // Callback notifiying that we have gotten initial data.
     var onInitialize = function(data) {
     	console.log("onInitialize");
-    	var lastDate = new Date(data.lastLogin);
 
-   		$scope.lastLogin = lastDate.getMonth() + 1 + '/' + lastDate.getDate() + '/' + lastDate.getFullYear();
+    	$scope.count = data.count;
     	$scope.friends = data.friends;
     	$scope.$apply();
     };
+
+    var onCountUpdate = function(count) {
+    	$scope.count = count;
+    	$scope.$apply();	
+    }
 
 
 	// When the app is destroyed, make sure to cleanly disconnect.
@@ -45,4 +51,5 @@ angular.module('gdlSocketsApp')
   	ConnSocket.events.addListener('disconnect', onDisconnect);
   	ConnSocket.events.addListener('connected', onConnect);
   	ConnSocket.events.addListener('initialize', onInitialize);
+  	ConnSocket.events.addListener('count', onCountUpdate);
   });
